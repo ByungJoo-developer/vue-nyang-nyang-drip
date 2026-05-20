@@ -8,6 +8,20 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    // 2. plugins 배열에서 삭제
+    /* obfuscator({
+      options: { ... },
+      apply: 'build',
+    }), 
+    */
+  ],
+})
+
+/*
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueDevTools(),
     obfuscator({
       options: {
         controlFlowFlattening: true,
@@ -48,3 +62,4 @@ export default defineConfig({
     },
   },
 })
+*/
