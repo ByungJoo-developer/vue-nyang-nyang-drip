@@ -1,24 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-//import HomeView from '../views/HomeView.vue'
 
 // 1. 연결할 컴포넌트들을 임포트합니다.
-import MainView from '../views/contents/MainView.vue'
-import BoardView from '../views/contents/BoardView.vue'
-import BoardDetailView from '../views/contents/BoardDetailView.vue'
-import TarotView from '../views/contents/TarotView.vue'
+import MainView         from '../views/main/MainView.vue'
+import BoardListView    from '@/views/board/BoardListView.vue';
+import BoardDetailView  from '@/views/board/BoardDetailView.vue';
+
 
 // 2. URL 경로와 컴포넌트를 매핑합니다.
 const routes = [
-  { path: '/', redirect: '/tarot' },
-  { path: '/main', name: 'Main', component: MainView },
-  { path: '/board', name: 'Board', component: BoardView },
-  { path: '/tarot', name: 'Tarot', component: TarotView },
-  {
-    path: '/board/:id', // :id는 변수입니다. (Path Variable)
+  { path: '/', redirect: '/main' },                                     // 첫페이지
+  { path: '/main',    name: 'Main', component: MainView },              // 메인페이지
+  
+  // 최신드립 게시판
+  { 
+    path: '/latest',  
+    name: 'BoardList', 
+    component: BoardListView,
+    // 💡 props를 오브젝트 형태로 선언하여 값을 고정으로 넘겨줍니다.
+    props: { boardMstId: '2026052000000001' } 
+  },                         
+  
+  //게시판 상세                                                                      
+  {                                                 
+    path: '/board/boardDetail/:boardMstId/:boardId', // 경로에서 두 개의 파라미터를 받겠다고 정의
     name: 'BoardDetail',
-    component: BoardDetailView,
-    props: true, // URL 파라미터를 컴포넌트의 props로 전달합니다.
-  },
+    component: (BoardDetailView )
+  }
 ]
 
 const router = createRouter({
