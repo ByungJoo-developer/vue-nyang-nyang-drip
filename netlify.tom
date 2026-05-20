@@ -1,0 +1,11 @@
+[build]
+  functions = "netlify/functions" # "내 함수는 여기 있어!"라고 알려주는 등대 역할
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200                   # "새로고침 해도 404 띄우지 마!"라고 하는 방어막 역할
+
+[functions]
+  node_handler = "v2" # 이 설정이 502 에러를 잡는 핵심입니다.
+  

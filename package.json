@@ -1,0 +1,36 @@
+{
+  "name": "first-vue-sample",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write --experimental-cli src/"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.105.3",
+    "axios": "^1.16.0",
+    "easy-speech": "^2.4.0",
+    "html2canvas": "^1.4.1",
+    "openai": "^6.37.0",
+    "pinia": "^3.0.4",
+    "uuid": "^14.0.0",
+    "vue": "^3.5.32",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "prettier": "3.8.3",
+    "sass": "^1.99.0",
+    "terser": "^5.46.2",
+    "vite": "^8.0.8",
+    "vite-plugin-javascript-obfuscator": "^3.1.0",
+    "vite-plugin-vue-devtools": "^8.1.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}
