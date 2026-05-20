@@ -5,16 +5,17 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import obfuscator from 'vite-plugin-javascript-obfuscator'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-    // 2. plugins 배열에서 삭제
-    /* obfuscator({
-      options: { ... },
-      apply: 'build',
-    }), 
-    */
-  ],
+  plugins: [vue(), vueDevTools()],
+  resolve: {
+    alias: {
+      // 이 부분이 있어야 @ 기호가 src 폴더를 가리킵니다!
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  // 빌드 설정은 일단 최소한으로 유지
+  build: {
+    sourcemap: false,
+  },
 })
 
 /*
