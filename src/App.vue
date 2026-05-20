@@ -1,18 +1,22 @@
 <template>
-  <div class="resume-app">
-    <mainHeader :currentView="view" @change-view="view = $event" />
+  <div class="app-wrapper">
+    <mainHeader /> 
 
-    <main class="main-content">
-      <div class="content-body">
-        <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
-      </div>
+    <div class="main-container">
+      <nav class="sidebar">
+        <ul>
+          <li>🏠 홈</li>
+          <li>🔥 최신 드립</li>
+          <li>🏆 명예의 전당</li>
+        </ul>
+      </nav>
 
-      <mainFooter />
-    </main>
+      <main class="content">
+        <router-view />
+      </main>
+    </div>
+
+    <mainFooter />
   </div>
 </template>
 
@@ -66,76 +70,36 @@ const handleViewChange = (newView) => {
 </script>
 
 <style>
-/* 1. 최상위 루트부터 높이 100% 강제 고정 */
-html,
-body,
-#app {
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 100% !important;
-  width: 100% !important;
-  overflow: hidden !important; /* 전체 스크롤 원천 봉쇄 */
+/* 1. 전체 화면을 위아래로 쌓는 박스 */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-/* 2. 전체 앱 컨테이너 */
-.resume-app {
-  display: flex !important;
-  flex-direction: row !important; /* 기본 가로 배치 (메뉴|본문) */
-  height: 100% !important;
-  width: 100% !important;
+/* 2. 사이드바와 본문을 가로로 배치하는 박스 */
+.main-container {
+  display: flex; /* 이게 없으면 가로 배치가 안 됩니다 */
+  flex: 1; /* 남은 공간을 다 차지함 */
 }
 
-/* 3. 본문 영역: 여기가 핵심입니다 */
-.main-content {
-  flex: 1 !important;
-  height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important; /* 여기는 hidden이어야 본문 스크롤만 남습니다 */
+.sidebar {
+  width: 200px; /* 고정 크기 */
+  background: #f8fafc;
 }
 
-.content-body {
-  flex: 1 !important;
-  /* overflow-y: auto; <-- 이 부분을 아래처럼 수정하세요 */
-  overflow-y: overlay; /* 스크롤바가 화면 폭을 차지하지 않게 해서 꿀렁거림 방지 */
+.content {
+  flex: 1; /* 나머지 공간 전부 차지 */
   padding: 40px;
-  background-color: #ffffff;
-
-  /* 박스 크기 계산 방식 고정 (패딩 때문에 커지는 것 방지) */
-  box-sizing: border-box !important;
 }
 
-/* 스크롤바 자체를 아주 얇게 만들거나, 내용이 적을 땐 안 보이게 처리 */
-.content-body::-webkit-scrollbar {
-  width: 6px;
-}
-.content-body::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-/* --- [모바일 대응: 768px 이하] --- */
+/* 3. 모바일일 때만 세로로 바꾸기 */
 @media (max-width: 768px) {
-  .resume-app {
-    flex-direction: column !important; /* 메뉴가 위로, 본문이 아래로 */
+  .main-container {
+    flex-direction: column; /* 세로로 쌓음 */
   }
-
-  /* 모바일에서 메뉴 높이가 너무 크면 본문이 안 보이니 주의! */
-  .main-content {
-    flex: 1 !important;
-    height: auto !important; /* 모바일은 내용에 따라 늘어나게 */
-    overflow-y: visible !important;
-  }
-
-  html,
-  body,
-  #app {
-    overflow: auto !important; /* 모바일은 전체 스크롤이 더 편함 */
-    height: auto !important;
-  }
-
-  .content-body {
-    padding: 20px 15px;
+  .sidebar {
+    width: 100%; /* 너비 100% */
   }
 }
 </style>
