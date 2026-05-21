@@ -11,7 +11,7 @@
         <p>{{ post.CONTENT }}</p>
       </div>
       <br />
-      <button class="btn-list" @click="$router.push('/')">목록으로</button>
+      <button class="btn-list" @click="$router.back()">목록으로</button>
     </div>
 
     <div v-else>

@@ -1,0 +1,199 @@
+.board-list-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.board-title {
+  font-size: 1.8rem;
+  color: #1e293b;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+/* 상단 서브 헤더 라인 */
+.board-sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.total-count {
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.total-count span {
+  color: #4f46e5;
+  font-weight: bold;
+}
+
+.btn-write {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-write:hover {
+  background-color: #4338ca;
+}
+
+/* 📊 테이블 스타일 디자인 */
+.table-wrapper {
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.list-table th,
+.list-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* 테이블 헤더 */
+.list-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* 컬럼별 고정 너비 및 정렬 규격 */
+.th-num,
+.td-num {
+  width: 80px;
+  text-align: center;
+  color: #94a3b8;
+}
+.th-writer,
+.td-writer {
+  width: 140px;
+}
+.th-date,
+.td-date {
+  width: 120px;
+  color: #64748b;
+}
+.th-views,
+.td-views {
+  width: 80px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* 제목 컬럼 스타일 */
+.td-title a {
+  color: #1e293b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-transform: capitalize;
+  text-overflow: ellipsis;
+}
+
+.td-title a:hover {
+  color: #4f46e5;
+}
+
+/* 행 하이라이트 효과 */
+.list-table tbody tr {
+  transition: background-color 0.2s;
+}
+.list-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.no-data {
+  text-align: center;
+  padding: 50px 0 !important;
+  color: #94a3b8;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; // 가로축 중앙 정렬
+  align-items: center; // 세로축 중앙 정렬
+  gap: 10px; // 버튼 사이 간격
+  margin-top: 20px;
+}
+
+.list-controls {
+  display: flex; // Flex 컨테이너로 설정
+  justify-content: center; // 가로 중앙 정렬
+  padding: 20px 0; // 위아래 여백
+  width: 100%; // 부모 너비 꽉 채우기
+
+  flex-direction: column; // 위아래로 배치
+  align-items: center; // ⭐️ 핵심: 가로 중앙 정렬
+  gap: 20px; // 페이징/더보기와 검색바 사이 간격
+}
+
+.btn-more {
+  padding: 10px 40px; // 버튼을 충분히 크게 해서 클릭하기 쉽게!
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+}
+
+.pagination,
+.btn-more {
+  // 둘 다 중앙에 위치하도록 보장
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.list-footer-controls {
+  display: flex;
+  flex-direction: column; // 세로로 배치 (페이징 아래에 검색바)
+  align-items: center; // 가로 중앙 정렬 핵심!
+  gap: 15px; // 페이징과 검색바 사이 간격
+  margin-top: 30px;
+  width: 100%;
+}
+
+.bottom-search-bar {
+  display: flex;
+  justify-content: center; // 내부 요소들 가로 중앙 정렬
+  gap: 5px;
+  justify-content: center; // 내부 요소들 가운데로
+}
+
+/* 📱 모바일 환경 최적화 */
+@media (max-width: 768px) {
+  .th-date,
+  .td-date,
+  .th-views,
+  .td-views {
+    display: none;
+  }
+
+  .list-table th,
+  .list-table td {
+    padding: 12px 10px;
+  }
+}

@@ -30,11 +30,11 @@
             <td colspan="5" class="no-data">아직 올라온 드립이 없다냥... 🐱</td>
           </tr>
 
-          <tr v-else v-for="(post, index) in boardList" :key="post.boardId || index">
-            <td class="td-num">{{ post.boardId || boardList.length - index }}</td>
+          <tr v-else v-for="(post, index) in boardList" :key="post.BOARD_ID || index">
+            <td class="td-num">{{ post.BOARD_ID || boardList.length - index }}</td>
             <td class="td-title">
               <router-link
-                :to="`/board/boardDetail/${post.boardMstId || currentMstId}/${post.boardId}`"
+                :to="`/board/boardDetail/${post.BOARD_MST_ID || currentMstId}/${post.BOARD_ID}`"
               >
                 {{ post.TITLE }}
               </router-link>
@@ -49,18 +49,48 @@
       </table>
     </div>
   </div>
+
+  <div class="list-controls">
+    <button
+      v-if="isMobile && boardList.length > 0"
+      class="btn-more"
+      @click="handleLoadMore"
+      :disabled="loading"
+    >
+      {{ loading ? '불러오는 중...' : '더보기' }}
+    </button>
+
+    <div v-else-if="!isMobile" class="pagination">
+      <button @click="handlePageChange(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+      <span>{{ currentPage }} 페이지</span>
+      <button @click="handlePageChange(currentPage + 1)">다음</button>
+    </div>
+
+    <div class="bottom-search-bar">
+      <select>
+        <option>제목</option>
+        <option>제목+내용</option>
+        <option>작성자</option>
+      </select>
+      <input type="text" placeholder="검색어를 입력하세요" />
+      <button>검색</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { nextTick } from 'vue' // 1. 상단에 nextTick 임포트 확인!
 import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
-
 const boardList = ref([])
 const loading = ref(false)
+const currentPage = ref(1)
+const pageSize = 15
+const isMobile = ref(window.innerWidth < 768)
 
 // 1. ⭐️ 라우터에서 props로 넘겨준 고정 ID('2026052000000001')를 여기서 정의합니다.
 const props = defineProps({
@@ -86,23 +116,52 @@ const boardTitle = computed(() => {
   return '🐱 냥냥 드립 게시판'
 })
 
-// 🔄 실제 자바 서버 연동 API 호출 함수
-const loadBoardList = async (paramPage = 1, paramSize = 5) => {
+// 화면 크기 감지 (Resize 이벤트)
+window.addEventListener('resize', () => {
+  isMobile.value = window.innerWidth < 768
+})
+
+// 🔄 데이터 로드 함수 수정: append 모드 추가
+const loadBoardList = async (page = 1, isAppend = false) => {
   loading.value = true
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL
-
-    // 이제 currentMstId.value에 '2026052000000001'이 안전하게 담겨서 전송됩니다!
     const response = await axios.get(
-      `${baseUrl}/api/board/list?boardMstId=${currentMstId.value}&page=${paramPage}&size=${paramSize}`,
+      `${baseUrl}/api/board/list?boardMstId=${currentMstId.value}&page=${page}&size=${pageSize}`,
     )
-    boardList.value = response.data || []
+
+    if (isAppend) {
+      boardList.value = [...boardList.value, ...response.data]
+    } else {
+      boardList.value = response.data || []
+    }
+    currentPage.value = page
   } catch (error) {
-    console.error('자바 백엔드로부터 게시판 리스트를 가져오는데 실패했습니다:', error)
-    boardList.value = []
+    console.error('불러오기 실패:', error)
   } finally {
     loading.value = false
   }
+}
+
+// 더보기 핸들러 (모바일)
+const handleLoadMore = async () => {
+  await loadBoardList(currentPage.value + 1, true)
+
+  // 2. 화면 렌더링이 완료된 후 실행
+  nextTick(() => {
+    // 3. 마지막 추가된 항목을 찾아 부드럽게 스크롤
+    // 리스트의 마지막 tr 요소를 찾습니다.
+    const rows = document.querySelectorAll('.list-table tbody tr')
+    if (rows.length > 0) {
+      const lastRow = rows[rows.length - 1]
+      lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  })
+}
+
+// 페이지 변경 핸들러 (PC)
+const handlePageChange = (page) => {
+  loadBoardList(page, false)
 }
 
 // 메뉴 이동 감시 (props나 route 파라미터가 바뀔 때 재생성)
@@ -118,149 +177,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.board-list-container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.board-title {
-  font-size: 1.8rem;
-  color: #1e293b;
-  margin-bottom: 30px;
-  font-weight: bold;
-}
-
-/* 상단 서브 헤더 라인 */
-.board-sub-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.total-count {
-  font-size: 0.95rem;
-  color: #64748b;
-}
-
-.total-count span {
-  color: #4f46e5;
-  font-weight: bold;
-}
-
-.btn-write {
-  background-color: #4f46e5;
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-write:hover {
-  background-color: #4338ca;
-}
-
-/* 📊 테이블 스타일 디자인 */
-.table-wrapper {
-  background-color: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-  overflow: hidden;
-}
-
-.list-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.95rem;
-}
-
-.list-table th,
-.list-table td {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-/* 테이블 헤더 */
-.list-table th {
-  background-color: #f8fafc;
-  color: #475569;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
-/* 컬럼별 고정 너비 및 정렬 규격 */
-.th-num,
-.td-num {
-  width: 80px;
-  text-align: center;
-  color: #94a3b8;
-}
-.th-writer,
-.td-writer {
-  width: 140px;
-}
-.th-date,
-.td-date {
-  width: 120px;
-  color: #64748b;
-}
-.th-views,
-.td-views {
-  width: 80px;
-  text-align: center;
-  color: #94a3b8;
-}
-
-/* 제목 컬럼 스타일 */
-.td-title a {
-  color: #1e293b;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.15s ease;
-
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-transform: capitalize;
-  text-overflow: ellipsis;
-}
-
-.td-title a:hover {
-  color: #4f46e5;
-}
-
-/* 행 하이라이트 효과 */
-.list-table tbody tr {
-  transition: background-color 0.2s;
-}
-.list-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-.no-data {
-  text-align: center;
-  padding: 50px 0 !important;
-  color: #94a3b8;
-}
-
-/* 📱 모바일 환경 최적화 */
-@media (max-width: 768px) {
-  .th-date,
-  .td-date,
-  .th-views,
-  .td-views {
-    display: none;
-  }
-
-  .list-table th,
-  .list-table td {
-    padding: 12px 10px;
-  }
-}
-</style>
+<style lang="scss" src="./BoardListView.scss" scoped></style>
