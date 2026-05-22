@@ -46,9 +46,13 @@ const updatePost = async () => {
 
     alert('수정되었습니다!')
 
+    // 1. 현재 글이 어느 게시판인지 확인
+    const targetName =
+      post.value.boardMstId === '2026052000000001' ? 'LatestBoardList' : 'HallBoardList'
+
     // 2. 💡 리스트 페이지로 이동하면서 어떤 게시판인지 마스터 ID만 숨겨서 전달
     router.push({
-      name: 'BoardList', // 본인의 리스트 라우터 네임에 맞게 적어주세요
+      name: targetName, // 본인의 리스트 라우터 네임에 맞게 적어주세요
       state: {
         boardMstId: post.value.boardMstId || history.state.boardMstId,
       },

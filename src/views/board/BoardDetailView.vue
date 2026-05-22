@@ -46,10 +46,14 @@ const fetchPost = async () => {
 const checkLoginStatus = async () => {
   const { data } = await supabase.auth.getSession()
 
-  // 💡 세션 데이터만 출력하고, error는 제거했습니다!
-  console.log('세션 데이터:', data.session)
-
   isLoggedIn.value = !!data.session
+
+  // 2. 💡 개발 환경(로컬)이면 강제로 버튼 노출!
+  // window.location.hostname이 'localhost'이면 무조건 true로 만듭니다.
+  if (window.location.hostname === 'localhost') {
+    isLoggedIn.value = true
+    //console.log('개발 모드: 수정 버튼 강제 활성화')
+  }
 }
 // 4. 컴포넌트가 화면에 나타날 때 즉시 실행
 onMounted(async () => {

@@ -58,6 +58,14 @@ router.beforeEach(async (to, from, next) => {
     window.history.replaceState({}, document.title, cleanUrl)
   }
 
+  // 특정 페이지에서 테스트를 강제하고 싶다면 아래와 같이 작성하세요.
+  const isLocal = window.location.hostname === 'localhost'
+
+  if (isLocal) {
+    console.log('개발 모드: 로그인 검증 건너뜀')
+    next()
+  }
+
   // 기존 로직들...
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const {
