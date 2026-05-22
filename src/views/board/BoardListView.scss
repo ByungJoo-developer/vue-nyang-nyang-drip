@@ -183,6 +183,14 @@
   justify-content: center; // 내부 요소들 가운데로
 }
 
+.click-title {
+  cursor: pointer;
+  color: #3182ce; /* 기존 링크 색상 대입 */
+}
+.click-title:hover {
+  text-decoration: underline; /* 마우스 올리면 밑줄 제공 */
+}
+
 /* 📱 모바일 환경 최적화 */
 @media (max-width: 768px) {
   .th-date,

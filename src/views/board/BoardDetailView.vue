@@ -1,17 +1,80 @@
+<script setup>
+import { supabase } from '@/supabase'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
+
+const route = useRoute()
+const router = useRouter() // 4. router 변수 정의
+const post = ref(null) // 초기값을 null로 설정
+const isLoggedIn = ref(false) // 💡 1. 변수 선언 누락 해결
+
+const goToEdit = () => {
+  // 현재 post가 가진 ID 값을 가지고 수정 페이지(BoardEdit)로 이동시킵니다.
+  router.push({
+    name: 'BoardEdit',
+    state: {
+      boardMstId: post.value.boardMstId, //
+      boardId: post.value.boardId,
+    },
+  })
+}
+
+const fetchPost = async () => {
+  // 💡 데이터가 없으면 즉시 중단하고 리스트로 돌려보냅니다. (이게 파라미터 생성을 막는 핵심!)
+  if (!history.state.boardMstId || !history.state.boardId) {
+    alert('데이터가 없습니다. 리스트로 돌아갑니다.')
+    router.replace('/latest') // 리스트 페이지로 이동
+    return
+  }
+
+  const boardMstId = history.state.boardMstId
+  const boardId = history.state.boardId
+  const baseUrl = import.meta.env.VITE_API_BASE_URL
+
+  try {
+    const response = await axios.get(
+      `${baseUrl}/api/board/detail?boardMstId=${boardMstId}&boardId=${boardId}`,
+    )
+    post.value = response.data
+  } catch (error) {
+    console.error('상세 데이터 로드 실패:', error)
+  }
+}
+
+// BoardDetailView.vue 의 checkLoginStatus 함수를 아래로 교체
+const checkLoginStatus = async () => {
+  const { data } = await supabase.auth.getSession()
+
+  // 💡 세션 데이터만 출력하고, error는 제거했습니다!
+  console.log('세션 데이터:', data.session)
+
+  isLoggedIn.value = !!data.session
+}
+// 4. 컴포넌트가 화면에 나타날 때 즉시 실행
+onMounted(async () => {
+  // 데이터를 먼저 불러오고, 동시에 로그인 상태도 확인
+  await Promise.all([fetchPost(), checkLoginStatus()])
+})
+</script>
+
 <template>
   <div class="board-detail">
     <div v-if="post">
-      <h1>{{ post.TITLE }}</h1>
+      <h1>{{ post.title }}</h1>
       <div class="meta">
-        <span>작성자: {{ post.USER_ID }}</span>
-        <span> | 게시글번호: {{ post.BOARD_ID }}</span>
+        <span>작성자: {{ post.userId }}</span>
+        <span> | 게시글번호: {{ post.boardId }}</span>
       </div>
       <hr />
       <div class="content">
-        <p>{{ post.CONTENT }}</p>
+        <p>{{ post.content }}</p>
       </div>
       <br />
-      <button class="btn-list" @click="$router.back()">목록으로</button>
+      <div class="btn-group">
+        <button class="btn-list" @click="goToEdit" v-if="isLoggedIn">수정</button>
+        <button class="btn-list" @click="$router.back()">목록으로</button>
+      </div>
     </div>
 
     <div v-else>
@@ -19,37 +82,5 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import axios from 'axios'
-
-const route = useRoute()
-const post = ref(null) // 초기값을 null로 설정
-
-const fetchPost = async () => {
-  // 1. 라우터에서 :id 값을 가져옵니다.
-  const boardMstId = route.params.boardMstId
-  const boardId = route.params.boardId
-  const baseUrl = import.meta.env.VITE_API_BASE_URL
-
-  try {
-    // 2. 백엔드 상세 조회 API 호출 (boardId 파라미터 전달)
-    const response = await axios.get(
-      `${baseUrl}/api/board/detail?boardMstId=${boardMstId}&boardId=${boardId}`,
-    )
-
-    // 3. 받아온 데이터를 post 변수에 저장 (이때 화면이 자동으로 업데이트됨)
-    post.value = response.data
-  } catch (error) {
-    console.error('상세 데이터 로드 실패:', error)
-    alert('게시글을 불러오지 못했습니다.')
-  }
-}
-
-// 4. 컴포넌트가 화면에 나타날 때 즉시 실행
-onMounted(fetchPost)
-</script>
 
 <style lang="scss" src="./BoardDetailView.scss" scoped></style>

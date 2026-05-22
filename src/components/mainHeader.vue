@@ -1,46 +1,14 @@
-<template>
-  <header class="main-header">
-    <div class="header-top">
-      <div class="logo">🐱 냥냥 드립</div>
-
-      <div class="search-container">
-        <input type="text" placeholder="검색어를 입력하냥" />
-        <button>🔍</button>
-      </div>
-
-      <div class="login-container">
-        &nbsp;&nbsp;&nbsp;
-        <div v-if="user" class="user-profile">
-          <span class="user-name">{{ user.user_metadata.full_name }}님 반갑습니다!</span>
-          <button @click="handleLogout" class="logout-btn">로그아웃</button>
-          <button @click="handleWithdrawal" class="withdraw-link">탈퇴하기</button>
-        </div>
-
-        <button v-else @click="loginWithGoogle" class="google-btn">
-          <img src="https://developers.google.com/static/identity/images/g-logo.png" alt="Google" />
-          <span>구글 로그인</span>
-        </button>
-      </div>
-    </div>
-
-    <nav class="nav-links">
-      <router-link to="/main">🏠 홈</router-link>
-      <router-link to="/latest">🔥 최신 드립</router-link>
-    </nav>
-  </header>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/supabase'
 
 // TarotHaemi 서비스 전용 탈퇴 유저 확인 키
 const TAROT_HAEMI_WITHDRAWN_USER_FLAG = 'Nyang_Nyang_Withdrawn_User_Status'
 
 // 1. 환경변수 로드 (Vite 방식) 및 Supabase 클라이언트 초기화
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+//const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+//const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+//const supabase = createClient(supabaseUrl, supabaseKey)
 
 const user = ref(null)
 
@@ -51,7 +19,7 @@ const loginWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/main`,
       // 💡 탈퇴했던 유저라면 구글 계정 선택창(prompt)을 강제로 띄움
       queryParams: isWithdrawn ? { prompt: 'select_account' } : {},
     },
@@ -109,8 +77,44 @@ onMounted(async () => {
   if (currentUser) {
     user.value = currentUser
   }
+
+  // 2. 그 다음 페이지 이동
+  router.replace('/main')
 })
 </script>
+
+<template>
+  <header class="main-header">
+    <div class="header-top">
+      <div class="logo">🐱 냥냥 드립</div>
+
+      <div class="search-container">
+        <input type="text" placeholder="검색어를 입력하냥" />
+        <button>🔍</button>
+      </div>
+
+      <div class="login-container">
+        &nbsp;&nbsp;&nbsp;
+        <div v-if="user" class="user-profile">
+          <span class="user-name">{{ user.user_metadata.full_name }}님 반갑습니다!</span>
+          <button @click="handleLogout" class="logout-btn">로그아웃</button>
+          <button @click="handleWithdrawal" class="withdraw-link">탈퇴하기</button>
+        </div>
+
+        <button v-else @click="loginWithGoogle" class="google-btn">
+          <img src="https://developers.google.com/static/identity/images/g-logo.png" alt="Google" />
+          <span>구글 로그인</span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <router-link to="/main">🏠 홈</router-link>
+      <router-link to="/latest">🔥 최신 드립</router-link>
+      <router-link to="/hall">🔥 냥냥 드립</router-link>
+    </nav>
+  </header>
+</template>
 
 <style scoped>
 /* ==========================================================================
