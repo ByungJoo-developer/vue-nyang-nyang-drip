@@ -72,6 +72,7 @@ router.beforeEach(async (to, from, next) => {
   if (isLocal) {
     console.log('개발 모드: 로그인 검증 건너뜀')
     next()
+    return
   }
 
   // 기존 로직들...

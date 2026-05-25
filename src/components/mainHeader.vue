@@ -1,16 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/supabase'
+import { useRouter } from 'vue-router'
 
 // TarotHaemi 서비스 전용 탈퇴 유저 확인 키
 const TAROT_HAEMI_WITHDRAWN_USER_FLAG = 'Nyang_Nyang_Withdrawn_User_Status'
-
-// 1. 환경변수 로드 (Vite 방식) 및 Supabase 클라이언트 초기화
-//const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-//const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-//const supabase = createClient(supabaseUrl, supabaseKey)
-
 const user = ref(null)
+const router = useRouter()
 
 const loginWithGoogle = async () => {
   // 💡 저장소에서 플래그 확인

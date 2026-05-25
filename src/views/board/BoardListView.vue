@@ -163,7 +163,7 @@ onMounted(() => {
         전체 <span>{{ boardList.length }}</span
         >개
       </div>
-      <button class="btn-write" @click="goToWrite">✏️ 드립치기</button>
+      <button class="btn-write" @click="goToWrite">글쓰기</button>
     </div>
 
     <div class="table-wrapper">
