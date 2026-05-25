@@ -204,7 +204,7 @@ onMounted(() => {
             </td>
             <td class="td-writer">{{ post.writer || post.userId || '무명묘' }}</td>
 
-            <td class="td-date">{{ formatDate(post.updateDate, post.isToday) }}</td>
+            <td class="td-date">{{ formatDate(post.createDate, post.isToday) }}</td>
 
             <td class="td-views">{{ post.views ?? 0 }}</td>
           </tr>
