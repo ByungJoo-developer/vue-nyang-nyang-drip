@@ -6,6 +6,7 @@ import MainView from '../views/main/MainView.vue' // 메인 화면
 import BoardListView from '@/views/board/BoardListView.vue' // 게시판 리스트
 import BoardDetailView from '@/views/board/BoardDetailView.vue' // 게시판 상세
 import BoardEditView from '@/views/board/BoardEditView.vue' // 게시판 수정
+import BoardWriteView from '@/views/board/BoardWriteView.vue' // 게시판 수정
 
 // 2. URL 경로와 컴포넌트를 매핑합니다.
 const routes = [
@@ -41,6 +42,13 @@ const routes = [
     path: '/board/edit',
     name: 'BoardEdit',
     component: BoardEditView,
+    meta: { requiresAuth: true }, // 로그인 필수 여부
+  },
+
+  {
+    path: '/board/write',
+    name: 'BoardWrite',
+    component: BoardWriteView,
     meta: { requiresAuth: true }, // 로그인 필수 여부
   },
 ]

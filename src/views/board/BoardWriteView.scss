@@ -1,0 +1,28 @@
+/* 기존 상세 보기 스타일 + 수정용 추가 스타일 */
+.edit-title {
+  width: 100%;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+.edit-content {
+  width: 100%;
+  min-height: 300px;
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 1.05rem;
+}
+.btn-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.btn-save {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

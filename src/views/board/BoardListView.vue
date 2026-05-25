@@ -12,6 +12,12 @@ const currentPage = ref(1)
 const pageSize = 15
 const isMobile = ref(window.innerWidth < 768)
 
+// 1. 검색 관련 상태 추가 (반드시 상단 변수 선언부에 같이 둘 것)
+const searchType = ref('01') //
+const searchQuery = ref('') // 사용자가 입력창에 치는 실시간 텍스트
+const activeSearchType = ref('') // 💡 실제 "검색" 버튼을 눌렀을 때 락(Lock)이 걸리는 검색 조건
+const activeSearchQuery = ref('') // 💡 실제 "검색" 버튼을 눌렀을 때 락(Lock)이 걸리는 검색어
+
 // 1. ⭐️ 라우터에서 props로 넘겨준 고정 ID('2026052000000001')를 여기서 정의합니다.
 const props = defineProps({
   boardMstId: {
@@ -53,14 +59,23 @@ window.addEventListener('resize', () => {
   isMobile.value = window.innerWidth < 768
 })
 
-// 🔄 데이터 로드 함수 수정: append 모드 추가
+// 2. 통합 데이터 로드 함수 수정
 const loadBoardList = async (page = 1, isAppend = false) => {
   loading.value = true
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL
-    const response = await axios.get(
-      `${baseUrl}/api/board/list?boardMstId=${currentMstId.value}&page=${page}&size=${pageSize}`,
-    )
+    let url = `${baseUrl}/api/board/list?boardMstId=${currentMstId.value}&page=${page}&size=${pageSize}`
+
+    // 확정된 검색어가 있을 때만 실행
+    if (activeSearchQuery.value.trim() !== '') {
+      // 💡 여기서 01과 02를 주소창 파라미터(title, content)로 치환합니다.
+      // 아까 만든 백엔드 컨트롤러(@RequestParam "title", "content")와 톱니바퀴처럼 딱 맞물립니다!
+      const paramKey = activeSearchType.value === '01' ? 'title' : 'content'
+
+      url += `&keywordType=${activeSearchType.value}&keyword=${encodeURIComponent(activeSearchQuery.value)}`
+    }
+
+    const response = await axios.get(url)
 
     if (isAppend) {
       boardList.value = [...boardList.value, ...response.data]
@@ -75,14 +90,23 @@ const loadBoardList = async (page = 1, isAppend = false) => {
   }
 }
 
-// 더보기 핸들러 (모바일)
+// 3. 🔍 [검색] 버튼 핸들러
+const handleSearch = () => {
+  // 사용자가 현재 입력창에 쳐놓은 값을 "나 이제 이걸로 검색할 거야!" 하고 확정(Lock) 지어줍니다.
+  activeSearchType.value = searchType.value
+  activeSearchQuery.value = searchQuery.value
+
+  // 검색 조건이 바뀐 상태로 무조건 '1페이지'부터 새로 리스트를 받아옵니다 (Append는 false)
+  loadBoardList(1, false)
+}
+
+// 4. 📱 모바일 [더보기] 핸들러
 const handleLoadMore = async () => {
+  // 다음 페이지 번호를 계산해서 넘기고, 기존 데이터 뒤에 붙여야 하므로이 값을 true로 보냅니다.
+  // 이 안에서 loadBoardList를 호출하므로, 확정된 검색 조건(activeSearchQuery)이 자동으로 같이 날아갑니다!
   await loadBoardList(currentPage.value + 1, true)
 
-  // 2. 화면 렌더링이 완료된 후 실행
   nextTick(() => {
-    // 3. 마지막 추가된 항목을 찾아 부드럽게 스크롤
-    // 리스트의 마지막 tr 요소를 찾습니다.
     const rows = document.querySelectorAll('.list-table tbody tr')
     if (rows.length > 0) {
       const lastRow = rows[rows.length - 1]
@@ -91,10 +115,22 @@ const handleLoadMore = async () => {
   })
 }
 
-// 페이지 변경 핸들러 (PC)
+// 💻 PC [페이지 변경] 핸들러
 const handlePageChange = (page) => {
+  // 특정 페이지를 강제로 불러오며, 리스트를 새로 갈아끼웁니다 (Append는 false)
+  // 이때도 역시 기존에 확정해둔 검색 조건이 자동으로 병합되어 날아갑니다.
   loadBoardList(page, false)
 }
+
+// 🔄 메뉴 이동 감시 (게시판 종류가 바뀌면 검색 조건도 시원하게 초기화해 주는 게 좋습니다)
+watch(
+  () => currentMstId.value,
+  () => {
+    searchQuery.value = ''
+    activeSearchQuery.value = ''
+    loadBoardList(1, false)
+  },
+)
 
 // 메뉴 이동 감시 (props나 route 파라미터가 바뀔 때 재생성)
 watch(
@@ -103,6 +139,15 @@ watch(
     loadBoardList()
   },
 )
+
+const goToWrite = () => {
+  // 💡 라우터를 통해 글쓰기 페이지로 이동하면서,
+  // '나 지금 자유게시판에서 글쓰기 누른 거야'라고 주소창에 파라미터를 묻혀서 보냅니다.
+  router.push({
+    path: '/board/write',
+    query: { boardMstId: currentMstId.value }, // 👈 query로 던졌는지 확인!
+  })
+}
 
 onMounted(() => {
   loadBoardList(1, 15)
@@ -174,14 +219,27 @@ onMounted(() => {
     </div>
 
     <div class="bottom-search-bar">
-      <select>
-        <option>제목</option>
-        <option>제목+내용</option>
-        <option>작성자</option>
+      <select v-model="searchType">
+        <option value="01">제목</option>
+        <option value="02">내용</option>
       </select>
-      <input type="text" placeholder="검색어를 입력하세요" />
-      <button>검색</button>
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="검색어를 입력하세요"
+        @keyup.enter="handleSearch"
+      />
+      <button @click="handleSearch">검색</button>
+
+      <button class="btn-write" @click="goToWrite">글쓰기</button>
     </div>
+
+    <p class="search-warning-text">
+      🐾 띄어쓰기가 틀리면 검색 결과가 안 나올 수 있다냥! <br />
+      우리 검색기는 문장을 공백 단위로 쪼개서 기억한다냥. <br />
+      단어와 단어 사이를 꼭 띄어서 입력해야 <br />
+      원하는 드립을 쏙쏙 찾아낼 수 있다냥!
+    </p>
   </div>
 </template>
 

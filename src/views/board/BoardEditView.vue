@@ -38,7 +38,7 @@ const updatePost = async () => {
     } = await supabase.auth.getSession()
     const token = session?.access_token // 요 녀석이 핵심 치트키입니다.
 
-    await axios.post(`${baseUrl}/api/board/update`, post.value, {
+    await axios.post(`${baseUrl}/api/board/upsert`, post.value, {
       headers: {
         Authorization: `Bearer ${token}`, // 'Bearer ' 한 칸 띄우고 토큰 첨부
       },

@@ -1,6 +1,6 @@
 <script setup>
 import { supabase } from '@/supabase'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -8,6 +8,11 @@ const route = useRoute()
 const router = useRouter() // 4. router 변수 정의
 const post = ref(null) // 초기값을 null로 설정
 const isLoggedIn = ref(false) // 💡 1. 변수 선언 누락 해결
+
+// 💡 여기에 추가하세요!
+const isLocal = computed(() => {
+  return ['localhost', '127.0.0.1'].includes(window.location.hostname)
+})
 
 const goToEdit = () => {
   // 현재 post가 가진 ID 값을 가지고 수정 페이지(BoardEdit)로 이동시킵니다.
@@ -18,6 +23,47 @@ const goToEdit = () => {
       boardId: post.value.boardId,
     },
   })
+}
+
+const deleteBoard = async () => {
+  // 💡 [방어막] 진짜 삭제할 건지 유저한테 한 번 물어보는 게 매너입니다냥!
+  if (!confirm('이 드립을 정말로 삭제하겠냐냥? 🐾')) {
+    return
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL
+
+  try {
+    // 1. 수파베이스 세션에서 현재 로그인한 유저의 토큰(JWT)을 꺼내옵니다.
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    const token = session?.access_token
+
+    // 2. 백엔드 삭제 API로 현재 보고 있는 게시글 정보(post.value)를 보냅니다.
+    await axios.post(`${baseUrl}/api/board/delete`, post.value, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 인증 토큰 첨부
+      },
+    })
+
+    alert('성공적으로 삭제되었다냥! 🎉')
+
+    // 3. 원래 있던 리스트 게시판에 맞게 타겟 설정
+    const targetName =
+      post.value.boardMstId === '2026052000000001' ? 'LatestBoardList' : 'HallBoardList'
+
+    // 4. 삭제 완료 후 해당 리스트 페이지로 튕겨주기
+    router.push({
+      name: targetName,
+      state: {
+        boardMstId: post.value.boardMstId,
+      },
+    })
+  } catch (error) {
+    console.error('삭제 실패:', error)
+    alert('삭제에 실패했다냥.. 다시 시도해달라냥!')
+  }
 }
 
 const fetchPost = async () => {
@@ -76,8 +122,9 @@ onMounted(async () => {
       </div>
       <br />
       <div class="btn-group">
-        <button class="btn-list" @click="goToEdit" v-if="isLoggedIn">수정</button>
+        <button class="btn-list" @click="goToEdit" v-if="isLoggedIn || isLocal">수정</button>
         <button class="btn-list" @click="$router.back()">목록으로</button>
+        <button class="btn-list" @click="deleteBoard">삭제</button>
       </div>
     </div>
 
