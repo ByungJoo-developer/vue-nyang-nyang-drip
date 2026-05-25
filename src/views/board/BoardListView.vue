@@ -38,6 +38,19 @@ const goToDetail = (post) => {
   })
 }
 
+const formatDate = (dateString, isToday) => {
+  if (!dateString) return ''
+
+  // 💡 DB에서 판단해 준 'Y' 값만 보고 칼같이 분기 처리! (유저 PC 시간 안 봄)
+  if (isToday === 'Y') {
+    // 2026-05-25 18:15:30 에서 시간(18:15)만 쏙 자르기
+    return dateString.substring(11, 16)
+  } else {
+    // 2026-05-25 18:15:30 에서 날짜(2026-05-25)만 쏙 자르기
+    return dateString.substring(0, 10)
+  }
+}
+
 // 2. ⭐️ 이제 route.params 대신 라우터가 넣어준 props를 우선적으로 바라보게 만듭니다.
 const currentMstId = computed(() => {
   // 라우터 props로 들어온 게 있다면 쓰고, 아니라면 주소창 동적 파라미터(:boardMstId)를 봅니다.
@@ -170,7 +183,6 @@ onMounted(() => {
       <table class="list-table">
         <thead>
           <tr>
-            <th class="th-num">번호</th>
             <th class="th-title">제목</th>
             <th class="th-writer">작성자</th>
             <th class="th-date">날짜</th>
@@ -179,22 +191,21 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-if="loading">
-            <td colspan="5" class="no-data">드립 목록을 긁어오는 중이다냥... 🐾</td>
+            <td colspan="4" class="no-data">드립 목록을 긁어오는 중이다냥... 🐾</td>
           </tr>
 
           <tr v-else-if="boardList.length === 0">
-            <td colspan="5" class="no-data">아직 올라온 드립이 없다냥... 🐱</td>
+            <td colspan="4" class="no-data">아직 올라온 드립이 없다냥... 🐱</td>
           </tr>
 
           <tr v-else v-for="(post, index) in boardList" :key="post.boardId || index">
-            <td class="td-num">{{ post.boardId || boardList.length - index }}</td>
             <td class="td-title click-title" @click="goToDetail(post)">
               {{ post.title }}
             </td>
             <td class="td-writer">{{ post.writer || post.userId || '무명묘' }}</td>
-            <!--
-            <td class="td-date">{{ formatDate(post.regDt || post.date) }}</td>
-            -->
+
+            <td class="td-date">{{ formatDate(post.updateDate, post.isToday) }}</td>
+
             <td class="td-views">{{ post.views ?? 0 }}</td>
           </tr>
         </tbody>
