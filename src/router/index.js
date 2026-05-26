@@ -31,6 +31,15 @@ const routes = [
     props: { boardMstId: '2026052000000002' },
   },
 
+  // 냥냥드립 게시판 리스트
+  {
+    path: '/boardTech',
+    name: 'boardTechList',
+    component: BoardListView,
+    // 💡 props를 오브젝트 형태로 선언하여 값을 고정으로 넘겨줍니다.
+    props: { boardMstId: '2026052000000003' },
+  },
+
   //게시판 상세
   {
     path: '/board/boardDetail', // 경로에서 두 개의 파라미터를 받겠다고 정의

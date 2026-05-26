@@ -6,6 +6,7 @@ import axios from 'axios'
 const router = useRouter()
 const latestPosts = ref([])
 const nyaPosts = ref([])
+const techPosts = ref([])
 
 // 1. 상세 페이지로 데이터를 '숨겨서(state)' 이동시키는 함수
 const goToDetail = (post) => {
@@ -42,6 +43,7 @@ onMounted(async () => {
   // 각 게시판별로 호출
   latestPosts.value = await loadBoard('2026052000000001', 1, 5)
   nyaPosts.value = await loadBoard('2026052000000002', 1, 5)
+  techPosts.value = await loadBoard('2026052000000003', 1, 5)
 })
 </script>
 
@@ -75,7 +77,17 @@ onMounted(async () => {
         </ul>
       </section>
       <section class="box box3">
-        <h2>빈 영역 A</h2>
+        <h2>테크드립</h2>
+        <ul>
+          <li
+            v-for="post in techPosts"
+            :key="post.boardId"
+            @click="goToDetail(post)"
+            class="click-title"
+          >
+            <span>[테크</span> {{ post.title }}
+          </li>
+        </ul>
       </section>
       <section class="box box4">
         <h2>빈 영역 B</h2>

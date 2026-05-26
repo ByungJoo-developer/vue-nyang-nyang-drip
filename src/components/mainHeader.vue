@@ -108,6 +108,7 @@ onMounted(async () => {
       <router-link to="/main">🏠 홈</router-link>
       <router-link to="/latest">🔥 최신 드립</router-link>
       <router-link to="/hall">🔥 냥냥 드립</router-link>
+      <router-link to="/boardTech">🔥 테크 드립</router-link>
     </nav>
   </header>
 </template>
