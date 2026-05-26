@@ -81,3 +81,36 @@
   padding: 15px;
   border-radius: 6px;
 }
+
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden; /* 이게 있으면 가로 스크롤 자체가 안 생깁니다 */
+  }
+
+  .board-detail {
+    box-sizing: border-box; /* 패딩 포함해서 크기 계산 */
+    max-width: 95vw; /* 화면 너비 95%로 고정 */
+    margin: 10px auto;
+    padding: 15px;
+    overflow: hidden; /* 삐져나오는 자식들 강제 숨김 */
+  }
+
+  .btn-list {
+    width: 30%;
+    font-size: 0.8rem;
+    padding: 8px 0;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  /* 제목이 너무 길어서 삐져나가는 경우 방지 */
+  h1 {
+    font-size: 1.5rem !important; /* 제목 크기 강제 축소 */
+    word-break: break-all;
+  }
+}

@@ -29,3 +29,34 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+/* 기존 스타일은 유지하고, 아래 미디어 쿼리만 추가하세요 */
+@media (max-width: 768px) {
+  .board-detail {
+    max-width: 95vw;
+    margin: 10px auto;
+    padding: 15px;
+    overflow: hidden;
+  }
+
+  /* 💡 핵심: input과 textarea가 부모 너비를 절대 넘지 않게 강제 */
+  .edit-title,
+  .edit-content {
+    box-sizing: border-box; /* 패딩이 너비에 포함됨 */
+    width: 100%; /* 부모 컨테이너에 딱 맞춤 */
+    padding: 10px; /* 모바일에서는 패딩을 조금 줄임 */
+    font-size: 1rem; /* 모바일에서는 글자 크기를 살짝 줄여서 가독성 확보 */
+  }
+
+  /* 제목 입력창 */
+  .edit-title {
+    font-size: 1.2rem; /* 제목이 너무 크면 삐져나오니 줄임 */
+  }
+
+  /* 수정/취소 버튼 */
+  .btn-save,
+  .btn-list {
+    width: 45%; /* 30%보다 조금 더 크게 해서 클릭하기 편하게 */
+    padding: 10px 0;
+  }
+}
