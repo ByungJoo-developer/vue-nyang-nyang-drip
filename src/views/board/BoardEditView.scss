@@ -8,7 +8,10 @@
 }
 .edit-content {
   width: 100%;
-  min-height: 300px;
+  /* ❌ 기존의 큰 고정 높이는 지우거나 줄여줍니다. */
+  min-height: 250px;
+  /* 💡 글 길이에 맞춰 지붕이 열리듯 아래로 자동 확장되는 마법의 속성 */
+  field-sizing: content;
   padding: 10px;
   margin-top: 20px;
   font-size: 1.05rem;
