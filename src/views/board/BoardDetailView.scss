@@ -66,3 +66,18 @@
   gap: 12px; /* 수정 버튼과 목록으로 버튼 사이의 간격 */
   margin-top: 20px; /* 본문과의 여백 */
 }
+
+.sql-plan {
+  /* 🚀 핵심 1: 코딩용 고정폭 폰트 패밀리 지정 (아이폰, 갤럭시, 윈도우 공용 치트키) */
+  font-family: 'Courier New', Courier, monospace, Consolas, '맑은 고딕 고정';
+
+  /* 🚀 핵심 2: 공백과 줄바꿈을 오라클 결과창 그대로 유지 */
+  white-space: pre-wrap;
+
+  /* 글자 크기를 살짝 줄여주면 모바일에서도 줄바꿈 안 깨지고 이쁘게 나옵니다냥 */
+  font-size: 0.85rem;
+  line-height: 1.4;
+  background-color: #f8fafc; /* 은은한 백그라운드 주면 더 간지납니다 */
+  padding: 15px;
+  border-radius: 6px;
+}

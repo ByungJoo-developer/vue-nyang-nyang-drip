@@ -125,7 +125,7 @@ onMounted(async () => {
       </div>
       <hr />
       <div class="content">
-        <p>{{ post.content }}</p>
+        <pre class="sql-plan">{{ post.content }}</pre>
       </div>
       <br />
       <div class="btn-group">
