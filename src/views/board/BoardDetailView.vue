@@ -50,8 +50,15 @@ const deleteBoard = async () => {
     alert('성공적으로 삭제되었다냥! 🎉')
 
     // 3. 원래 있던 리스트 게시판에 맞게 타겟 설정
-    const targetName =
-      post.value.boardMstId === '2026052000000001' ? 'LatestBoardList' : 'HallBoardList'
+    let targetName = ''
+
+    if (post.value.boardMstId === '2026052000000001') {
+      targetName = 'LatestBoardList'
+    } else if (post.value.boardMstId === '2026052000000002') {
+      targetName = 'HallBoardList'
+    } else if (post.value.boardMstId === '2026052000000003') {
+      targetName = 'boardTechList'
+    }
 
     // 4. 삭제 완료 후 해당 리스트 페이지로 튕겨주기
     router.push({
