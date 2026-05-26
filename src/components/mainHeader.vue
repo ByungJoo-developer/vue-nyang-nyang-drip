@@ -275,10 +275,10 @@ onMounted(async () => {
 }
 
 /* ==========================================================================
-   📱 모바일 환경 반응형 스타일 (화면폭 768px 이하)
+   📱 모바일 환경 반응형 스타일 (화면폭 768px 이하) - 싹 교체할 영역!
    ========================================================================== */
 @media (max-width: 768px) {
-  /* 상단 바 고정을 풀고 유연하게 쌓이도록 변경 */
+  /* 1. 상단 영역 유연하게 쌓이도록 변경 */
   .header-top {
     position: relative;
     height: auto;
@@ -292,22 +292,34 @@ onMounted(async () => {
     width: 100%;
   }
 
-  /* ⭐️ 핵심: 좌측 세로 고정이었던 메뉴판을 상단 가로줄 메뉴로 원상복구 */
+  /* 2. 🔥 메뉴판을 2열 2줄 격자(Grid) 구조로 쫀득하게 변경! */
   .nav-links {
-    position: relative; /* fixed 고정 해제 */
+    position: relative;
     top: 0;
     width: 100%;
     height: auto;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
-    padding: 10px 20px;
-    flex-direction: row; /* ◀ 다시 가로 정렬로 변경!! */
-    justify-content: space-around;
+    padding: 15px 20px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 반반씩 정확히 2열 정렬냥! */
+    gap: 10px; /* 버튼들 사이의 숨통을 트여주는 간격 */
+    box-sizing: border-box;
   }
 
+  /* 3. 개별 메뉴 버튼들이 이쁘게 꽉 차도록 세팅 */
   .nav-links a {
-    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 글자 정중앙 정렬 */
+    width: 100%;
+    padding: 12px 10px;
     font-size: 0.95rem;
+    background-color: #f8fafc; /* 터치하기 좋은 은은한 회색 배경 */
+    border-radius: 6px;
+    box-sizing: border-box;
+    text-align: center;
   }
 }
 </style>

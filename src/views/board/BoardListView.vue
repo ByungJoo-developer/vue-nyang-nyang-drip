@@ -60,11 +60,13 @@ const currentMstId = computed(() => {
 // 💡 마스터 ID에 맞춰 게시판 타이틀을 동적으로 세팅
 const boardTitle = computed(() => {
   // 고정값 ID 매핑 추가
-  if (currentMstId.value === '2026052000000001' || currentMstId.value === 'C6WGI06XVM') {
+  if (currentMstId.value === '2026052000000001') {
     return '🔥 최신 드립 게시판'
+  } else if (currentMstId.value === '2026052000000002') {
+    return '🐱 냥냥 드립 게시판'
+  } else if (currentMstId.value === '2026052000000003') {
+    return '테크 드립 게시판'
   }
-  if (currentMstId.value === 'HONOR_001') return '🏆 명예의 전당'
-  return '🐱 냥냥 드립 게시판'
 })
 
 // 화면 크기 감지 (Resize 이벤트)
