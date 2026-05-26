@@ -131,7 +131,7 @@ onMounted(async () => {
       <div class="btn-group">
         <button class="btn-list" @click="goToEdit" v-if="isLoggedIn || isLocal">수정</button>
         <button class="btn-list" @click="$router.back()">목록으로</button>
-        <button class="btn-list" @click="deleteBoard">삭제</button>
+        <button class="btn-list" @click="deleteBoard" v-if="isLoggedIn || isLocal">삭제</button>
       </div>
     </div>
 
